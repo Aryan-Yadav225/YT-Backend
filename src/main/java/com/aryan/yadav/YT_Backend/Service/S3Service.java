@@ -46,7 +46,7 @@ public class S3Service implements FileService {
                     "An Exception occured while uploading the file");
         }
 
-        awsS3Client.setObjectAcl(BUCKET_NAME, key, CannedAccessControlList.PublicRead);
+//        awsS3Client.setObjectAcl(BUCKET_NAME, key, CannedAccessControlList.PublicRead);
 
         return awsS3Client.getUrl(BUCKET_NAME, key).toExternalForm();
     }
