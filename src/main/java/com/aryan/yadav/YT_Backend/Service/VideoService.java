@@ -1,0 +1,31 @@
+package com.aryan.yadav.YT_Backend.Service;
+
+import com.aryan.yadav.YT_Backend.Model.Video;
+import com.aryan.yadav.YT_Backend.Repository.VideoRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+@Service
+public class VideoService {
+
+    private final S3Service s3Service;
+    private final VideoRepository videoRepository;
+
+    public VideoService(S3Service s3Service, VideoRepository videoRepository) {
+        this.s3Service = s3Service;
+        this.videoRepository = videoRepository;
+    }
+
+
+    public void uploadVideo(MultipartFile multipartFile) {
+        // upload to s3
+        String videoUrl = s3Service.uploadFile(multipartFile);
+
+        // save to db
+        var video = new Video();
+        video.setVideoUrl(videoUrl);
+        videoRepository.save(video);
+
+    }
+}

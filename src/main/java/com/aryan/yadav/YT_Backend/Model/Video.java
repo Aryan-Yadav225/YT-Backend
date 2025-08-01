@@ -1,9 +1,7 @@
 package com.aryan.yadav.YT_Backend.Model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 public class Video {
 
     @Id
@@ -55,4 +55,12 @@ public class Video {
     public void addComment(Comment comment) {
         commentList.add(comment);
     }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
 }
