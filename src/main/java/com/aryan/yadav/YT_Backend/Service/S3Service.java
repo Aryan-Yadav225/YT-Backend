@@ -1,9 +1,11 @@
 package com.aryan.yadav.YT_Backend.Service;
 
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.aryan.yadav.YT_Backend.Repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,14 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class S3Service implements FileService {
 
     public static final String BUCKET_NAME = "file-uploads-aryan";
-    private final AmazonS3Client awsS3Client;
+    private AmazonS3 awsS3Client;
+    public S3Service(AmazonS3 awsS3Client) {
+        this.awsS3Client = awsS3Client;
+    }
+
 
     @Override
     public String uploadFile(MultipartFile file) {
@@ -43,6 +48,6 @@ public class S3Service implements FileService {
 
         awsS3Client.setObjectAcl(BUCKET_NAME, key, CannedAccessControlList.PublicRead);
 
-        return awsS3Client.getResourceUrl(BUCKET_NAME, key);
+        return awsS3Client.getUrl(BUCKET_NAME, key).toExternalForm();
     }
 }

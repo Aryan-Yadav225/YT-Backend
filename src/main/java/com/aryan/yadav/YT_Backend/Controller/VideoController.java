@@ -8,10 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/videos")
-@RequiredArgsConstructor
 public class VideoController {
 
     private final VideoService videoService;
+
+    public VideoController(VideoService videoService) {
+        this.videoService = videoService;
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
