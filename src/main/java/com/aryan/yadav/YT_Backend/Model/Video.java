@@ -63,4 +63,23 @@ public class Video {
         return videoUrl;
     }
 
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+    public void setVideoStatus(VideoStatus videoStatus) {
+        this.videoStatus = videoStatus;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+    public String getId() {
+        return id;
+    }
+
 }
