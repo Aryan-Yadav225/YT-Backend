@@ -1,5 +1,7 @@
 package com.aryan.yadav.YT_Backend.Controller;
 
+import com.aryan.yadav.YT_Backend.DTO.UploadVideoResponse;
+import com.aryan.yadav.YT_Backend.DTO.VideoDTO;
 import com.aryan.yadav.YT_Backend.Service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,19 @@ public class VideoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void uploadVideo(@RequestParam("file") MultipartFile file) {
-        videoService.uploadVideo(file);
+    public UploadVideoResponse uploadVideo(@RequestParam("file") MultipartFile file) {
+        return videoService.uploadVideo(file);
+    }
+
+    @PostMapping("/thumbnail")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String uploadThumbnail(@RequestParam("file") MultipartFile file, @RequestParam ("videoId") String videoId) {
+        return videoService.uploadThumbnail(file, videoId);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public VideoDTO editVideoMetadata(@RequestBody VideoDTO videoDTO) {
+        return videoService.editVideo(videoDTO);
     }
 }
