@@ -13,10 +13,12 @@ public class VideoService {
 
     private final S3Service s3Service;
     private final VideoRepository videoRepository;
+    private final UserService userService;
 
-    public VideoService(S3Service s3Service, VideoRepository videoRepository) {
+    public VideoService(S3Service s3Service, VideoRepository videoRepository, UserService userService) {
         this.s3Service = s3Service;
         this.videoRepository = videoRepository;
+        this.userService = userService;
     }
 
     public UploadVideoResponse uploadVideo(MultipartFile multipartFile) {
@@ -65,6 +67,50 @@ public class VideoService {
         return mapVideoToVideoDTO(savedVideo);
     }
 
+    public  VideoDTO likeVideo(String videoId) {
+        //find the video by id
+        var savedVideo = this.getVideoById(videoId);
+
+        if(userService.ifLikedVideo(videoId)) {
+            //If the video is already liked by the user, then decrement the like count
+            savedVideo.getLikes().decrementAndGet();
+            userService.removeFromLikeVideos(videoId);
+        } else if(userService.ifDislikedVideo(videoId)) {
+            //If user already disliked the video, then increment the like count and decrement the dislike count
+            savedVideo.getDisLikes().decrementAndGet();
+            savedVideo.getLikes().incrementAndGet();
+            userService.addToLikeVideos(videoId);
+            userService.removeFromDislikedVideos(videoId);
+        }else{
+            // If neither liked nor disliked, add like
+            savedVideo.getLikes().incrementAndGet();
+            userService.addToLikeVideos(videoId);
+        }
+        videoRepository.save(savedVideo);
+        return mapVideoToVideoDTO(savedVideo);
+    }
+
+    public VideoDTO dislikeVideo(String videoId) {
+        //find the video by id
+        var savedVideo = this.getVideoById(videoId);
+        if(userService.ifDislikedVideo(videoId)) {
+            //If the video is already disliked by the user, then decrement the dislike count
+            savedVideo.getDisLikes().decrementAndGet();
+            userService.removeFromDislikedVideos(videoId);
+        } else if(userService.ifLikedVideo(videoId)) {
+            //If user already liked the video, then increment the dislike count and decrement the like count
+            savedVideo.getLikes().decrementAndGet();
+            savedVideo.getDisLikes().incrementAndGet();
+            userService.addToDislikedVideos(videoId);
+            userService.removeFromLikeVideos(videoId);
+        }else{
+            // If neither liked nor disliked, add dislike
+            savedVideo.getDisLikes().incrementAndGet();
+            userService.addToDislikedVideos(videoId);
+        }
+        videoRepository.save(savedVideo);
+        return mapVideoToVideoDTO(savedVideo);
+    }
 
     private VideoDTO mapVideoToVideoDTO(Video videoById) {
         VideoDTO videoDto = new VideoDTO();
@@ -75,10 +121,9 @@ public class VideoService {
         videoDto.setVideoUrl(videoById.getVideoUrl());
         videoDto.setThumbnailUrl(videoById.getThumbnailUrl());
         videoDto.setVideoStatus(videoById.getVideoStatus());
-        videoDto.setLikeCount(videoById.getLikes());
-        videoDto.setDislikeCount(videoById.getDisLikes());
+        videoDto.setLikeCount(videoById.getLikes().get());
+        videoDto.setDislikeCount(videoById.getDisLikes().get());
         videoDto.setViewCount(videoById.getViewCount());
         return videoDto;
     }
-
 }
