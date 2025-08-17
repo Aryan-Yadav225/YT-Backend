@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Document(value = "Video")
 public class Video {
@@ -16,8 +17,8 @@ public class Video {
     private String title;
     private String description;
     private String userId;
-    private int likes;
-    private int disLikes;
+    private AtomicInteger likes = new AtomicInteger(0);
+    private AtomicInteger disLikes = new AtomicInteger(0);
     private Set<String> tags = new HashSet<>();
     private String videoUrl;
     private VideoStatus videoStatus;
@@ -29,7 +30,7 @@ public class Video {
     public Video() {
     }
 
-    public Video(String id, String title, String description, String userId, int likes, int disLikes,
+    public Video(String id, String title, String description, String userId, AtomicInteger likes, AtomicInteger disLikes,
                  Set<String> tags, String videoUrl, VideoStatus videoStatus, int viewCount,
                  String thumbnailUrl, List<Comment> commentList) {
         this.id = id;
@@ -59,11 +60,11 @@ public class Video {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
-    public int getLikes() { return likes; }
-    public void setLikes(int likes) { this.likes = likes; }
+    public AtomicInteger getLikes() { return likes; }
+    public void setLikes(AtomicInteger likes) { this.likes = likes; }
 
-    public int getDisLikes() { return disLikes; }
-    public void setDisLikes(int disLikes) { this.disLikes = disLikes; }
+    public AtomicInteger getDisLikes() { return disLikes; }
+    public void setDisLikes(AtomicInteger disLikes) { this.disLikes = disLikes; }
 
     public Set<String> getTags() { return tags; }
     public void setTags(Set<String> tags) { this.tags = tags; }
@@ -86,19 +87,19 @@ public class Video {
     // --- Utility Methods ---
 
     public void incrementLikes() {
-        this.likes++;
+        likes.incrementAndGet();
     }
 
     public void decrementLikes() {
-        if (this.likes > 0) this.likes--;
+        if (likes.get() > 0) likes.decrementAndGet();
     }
 
     public void incrementDisLikes() {
-        this.disLikes++;
+        disLikes.incrementAndGet();
     }
 
     public void decrementDisLikes() {
-        if (this.disLikes > 0) this.disLikes--;
+        if (disLikes.get() > 0) disLikes.decrementAndGet();
     }
 
     public void incrementViewCount() {
