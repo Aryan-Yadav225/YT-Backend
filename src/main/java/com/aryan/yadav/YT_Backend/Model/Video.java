@@ -22,7 +22,7 @@ public class Video {
     private Set<String> tags = new HashSet<>();
     private String videoUrl;
     private VideoStatus videoStatus;
-    private int viewCount;
+    private AtomicInteger viewCount = new AtomicInteger(0);
     private String thumbnailUrl;
     private List<Comment> commentList = new ArrayList<>();
 
@@ -31,7 +31,7 @@ public class Video {
     }
 
     public Video(String id, String title, String description, String userId, AtomicInteger likes, AtomicInteger disLikes,
-                 Set<String> tags, String videoUrl, VideoStatus videoStatus, int viewCount,
+                 Set<String> tags, String videoUrl, VideoStatus videoStatus, AtomicInteger viewCount,
                  String thumbnailUrl, List<Comment> commentList) {
         this.id = id;
         this.title = title;
@@ -75,8 +75,8 @@ public class Video {
     public VideoStatus getVideoStatus() { return videoStatus; }
     public void setVideoStatus(VideoStatus videoStatus) { this.videoStatus = videoStatus; }
 
-    public int getViewCount() { return viewCount; }
-    public void setViewCount(int viewCount) { this.viewCount = viewCount; }
+    public int getViewCount() { return viewCount.get(); }
+    public void setViewCount(int viewCount) { this.viewCount.set(viewCount); }
 
     public String getThumbnailUrl() { return thumbnailUrl; }
     public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
@@ -103,7 +103,7 @@ public class Video {
     }
 
     public void incrementViewCount() {
-        this.viewCount++;
+        this.viewCount.incrementAndGet();
     }
 
     public void addComment(Comment comment) {

@@ -48,4 +48,10 @@ public class UserService {
         currentUser.removeFromDislikedVideos(videoId);
         userRepository.save(currentUser);
     }
+
+    public void addVideoToHistory(String videoId) {
+        User currentUser = getCurrentUser();
+        currentUser.addToVideoHistory(videoId);
+        userRepository.save(currentUser);
+    }
 }

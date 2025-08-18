@@ -64,7 +64,16 @@ public class VideoService {
 
     public VideoDTO getVideoDetails(String videoId) {
         var savedVideo = this.getVideoById(videoId);
+
+        increaseVideoCount(savedVideo);
+        userService.addVideoToHistory(videoId);
+
         return mapVideoToVideoDTO(savedVideo);
+    }
+
+    private void increaseVideoCount(Video savedVideo) {
+        savedVideo.incrementViewCount();
+        videoRepository.save(savedVideo);
     }
 
     public  VideoDTO likeVideo(String videoId) {
