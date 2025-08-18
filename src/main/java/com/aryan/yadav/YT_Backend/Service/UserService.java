@@ -54,4 +54,28 @@ public class UserService {
         currentUser.addToVideoHistory(videoId);
         userRepository.save(currentUser);
     }
+
+    public void subscribeUser(String userId) {
+        //Retreive the current user and add the userId to the subscribed to User list
+        User currentUser = getCurrentUser();
+        currentUser.addToSubscribedToUsers(userId);
+
+        //Retreive the target user and add the current user the subscribers list
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.addToSubscribers(currentUser.getId());
+
+        userRepository.save(currentUser);
+        userRepository.save(user);
+    }
+
+    public void unsubscribeUser(String userId) {
+        User currentUser = getCurrentUser();
+        currentUser.removeFromSubscribedToUsers(userId);
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.removeFromSubscribers(currentUser.getId());
+
+        userRepository.save(currentUser);
+        userRepository.save(user);
+    }
 }
