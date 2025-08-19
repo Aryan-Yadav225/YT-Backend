@@ -1,12 +1,16 @@
 package com.aryan.yadav.YT_Backend.Service;
 
+import com.aryan.yadav.YT_Backend.DTO.CommentDTO;
 import com.aryan.yadav.YT_Backend.DTO.UploadVideoResponse;
 import com.aryan.yadav.YT_Backend.DTO.VideoDTO;
+import com.aryan.yadav.YT_Backend.Model.Comment;
 import com.aryan.yadav.YT_Backend.Model.Video;
 import com.aryan.yadav.YT_Backend.Repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 public class VideoService {
@@ -134,5 +138,33 @@ public class VideoService {
         videoDto.setDislikeCount(videoById.getDisLikes().get());
         videoDto.setViewCount(videoById.getViewCount());
         return videoDto;
+    }
+
+    public void addComment(String videoId, CommentDTO commentDTO) {
+        Video video = this.getVideoById(videoId);
+        Comment comment = new Comment();
+        comment.setText(commentDTO.getCommentText());
+        comment.setAuthorId(commentDTO.getAuthorId());
+        video.addComment(comment);
+
+        videoRepository.save(video);
+    }
+
+    public List<CommentDTO> getAllComments(String videoId) {
+        Video video = this.getVideoById(videoId);
+        List<Comment> comments = video.getCommentList();
+
+        return comments.stream().map(comment -> mapToCommentDTO(comment)).toList();
+    }
+
+    private CommentDTO mapToCommentDTO(Comment comment) {
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setText(comment.getText());
+        commentDTO.setAuthorId(comment.getAuthorId());
+        return commentDTO;
+    }
+
+    public List<VideoDTO> getAllVideos() {
+        return videoRepository.findAll().stream().map(video -> mapVideoToVideoDTO(video)).toList();
     }
 }
