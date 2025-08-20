@@ -6,10 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 
 @RestController
@@ -28,4 +27,21 @@ public class UserController {
         return userRegistrationService.registerUser(jwt.getTokenValue());
     }
 
+    @PostMapping("subscribe/{userId}")
+    public boolean subscribeUser(@PathVariable String userId) {
+        userService.  subscribeUser(userId);
+        return true;
+    }
+
+    @PostMapping("unsubscribe/{userId}")
+    public boolean unsubscribeUser(@PathVariable String userId) {
+        userService.unsubscribeUser(userId);
+        return true;
+    }
+
+    @GetMapping("/{userId}/history")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<String> getHistory(@PathVariable String userId) {
+        return userService.getHistory(userId);
+    }
 }

@@ -1,5 +1,6 @@
 package com.aryan.yadav.YT_Backend.Controller;
 
+import com.aryan.yadav.YT_Backend.DTO.CommentDTO;
 import com.aryan.yadav.YT_Backend.DTO.UploadVideoResponse;
 import com.aryan.yadav.YT_Backend.DTO.VideoDTO;
 import com.aryan.yadav.YT_Backend.Service.VideoService;
@@ -7,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/videos")
@@ -47,9 +50,28 @@ public class VideoController {
     public VideoDTO likeVideo(@PathVariable String videoId) {
         return videoService.likeVideo(videoId);
     }
+
     @PostMapping("/{videoId}/dislike")
     @ResponseStatus(HttpStatus.OK)
     public VideoDTO dislikeVideo(@PathVariable String videoId) {
         return videoService.dislikeVideo(videoId);
+    }
+
+    @PostMapping("/{videoId}/comment")
+    @ResponseStatus(HttpStatus.OK)
+    public void addComment(@PathVariable String videoId, @RequestBody CommentDTO commentDTO) {
+        videoService.addComment(videoId, commentDTO);
+    }
+
+    @GetMapping("/{videoId}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CommentDTO> getAllComment(@PathVariable String videoId) {
+        return videoService.getAllComments(videoId);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<VideoDTO> getAllVideos() {
+        return videoService.getAllVideos();
     }
 }
